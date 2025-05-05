@@ -738,8 +738,8 @@ nav ul li a.active::after {
 
 /* Footer */
 footer {
-  background-color: var(--secondary-color);
-  color: white;
+  background-color: #1e1e1e !important;
+  color: white !important;
   padding: 3rem 2rem 1rem;
   position: relative;
 }
@@ -754,8 +754,8 @@ footer::before {
   background: linear-gradient(
     to top left,
     transparent 49%,
-    var(--secondary-color) 50%
-  );
+    #1e1e1e 50%
+  ) !important;
 }
 
 .footer-content {
@@ -856,32 +856,32 @@ footer ul li a:hover::before {
   opacity: 0.6;
 }
 
-/* Fix footer background and text color in dark mode */
+/* Override any theme switching that might affect footer */
+[data-theme="light"] footer,
 [data-theme="dark"] footer {
-  background: var(--secondary-color) !important;
+  background: #1e1e1e !important;
   color: #fff !important;
 }
 
-[data-theme="dark"] .footer-logo p,
-[data-theme="dark"] .footer-links h4,
-[data-theme="dark"] .footer-resources h4,
-[data-theme="dark"] .footer-bottom,
-[data-theme="dark"] .footer-links ul li a,
-[data-theme="dark"] .footer-resources ul li a {
+[data-theme="light"] footer::before,
+[data-theme="dark"] footer::before {
+  background: linear-gradient(
+    to top left,
+    transparent 49%,
+    #1e1e1e 50%
+  ) !important;
+}
+
+/* Ensure all footer text and links are visible on dark background */
+footer .footer-logo p,
+footer .footer-links h4,
+footer .footer-resources h4,
+footer .footer-bottom p,
+footer .footer-bottom a,
+footer .footer-links ul li a,
+footer .footer-resources ul li a {
   color: #fff !important;
   opacity: 0.9;
-}
-
-[data-theme="dark"] .footer-links ul li a:hover,
-[data-theme="dark"] .footer-resources ul li a:hover {
-  color: var(--primary-color) !important;
-  opacity: 1;
-}
-
-/* Remove or override any --bg-color-dark usage for footer in dark mode */
-[data-theme="dark"] footer,
-[data-theme="dark"] footer::before {
-  background: var(--secondary-color) !important;
 }
 
 /* Animations */
