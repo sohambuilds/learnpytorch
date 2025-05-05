@@ -6,12 +6,67 @@
     <title>Modules | Learn PyTorch, fast.</title>
     <link rel="stylesheet" href="css/styles.css" />
     <script src="js/script.js" defer></script>
+    <style>
+      /* Remove slanted segment and make a cleaner footer join */
+      footer {
+        background: var(--bg-color-dark);
+        border-top: 1px solid var(--border-color);
+        margin-top: 3rem;
+        position: relative;
+      }
+
+      /* Ensure no pseudo-elements are creating slants */
+      footer::before,
+      .modules-container::after,
+      main::after {
+        display: none;
+      }
+
+      /* Fix spacing between main content and footer */
+      .modules-container {
+        margin-bottom: 0;
+        padding-bottom: 2rem;
+        position: relative;
+        background: var(--bg-color);
+        z-index: 1;
+      }
+    </style>
   </head>
   <body>
     <header>
-      <div class="logo-container">
-        <img src="assets/pytorch-logo.png" alt="PyTorch Logo" class="logo" />
-        <h1>Learn PyTorch, fast.</h1>
+      <div
+        class="logo-container"
+        style="
+          background: rgba(30, 30, 30, 0.7);
+          padding: 8px 18px;
+          border-radius: 12px;
+          display: inline-flex;
+          align-items: center;
+          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(4px);
+          margin-top: 14px;
+          margin-left: 14px;
+        "
+      >
+        <img
+          src="assets/pytorch-logo.png"
+          alt="PyTorch Logo"
+          class="logo"
+          style="height: 44px; width: auto"
+        />
+        <h1
+          style="
+            margin-left: 12px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+          "
+        >
+          <span style="font-weight: 400; color: #fff">Learn</span>
+          <span style="font-weight: 700; color: #ff5722"> PyTorch</span
+          ><span style="font-weight: 400; color: #fff">, fast.</span>
+        </h1>
       </div>
       <div class="header-right">
         <nav id="main-nav">
@@ -46,9 +101,10 @@
 
       <h1 class="page-title">Learning Modules</h1>
       <p class="page-description">
-        I've designed this learning path to help you master PyTorch step-by-step. Each
-        module builds upon the previous one, creating a solid foundation of deep
-        learning skills that you can apply to your own projects.
+        I've designed this learning path to help you master PyTorch
+        step-by-step. Each module builds upon the previous one, creating a solid
+        foundation of deep learning skills that you can apply to your own
+        projects.
       </p>
 
       <div class="learning-path">
@@ -80,9 +136,7 @@
           <h4>Connect</h4>
           <ul>
             <li>
-              <a
-                href="https://sohambuilds.github.io"
-                target="_blank"
+              <a href="https://sohambuilds.github.io" target="_blank"
                 >Portfolio</a
               >
             </li>
@@ -101,7 +155,8 @@
       </div>
       <div class="footer-bottom">
         <p>
-          &copy; 2023 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>
+          &copy; 2025 PyTorch Fundamentals by
+          <a href="https://sohambuilds.github.io" target="_blank" style="color: #ff5722;">Soham Roy</a>
         </p>
       </div>
     </footer>

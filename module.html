@@ -7,15 +7,213 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/prism.css" />
     <script src="js/prism.js" defer></script>
+    <script src="js/module1.js" defer></script>
+    <script src="js/module2.js" defer></script>
+    <script src="js/module3.js" defer></script>
     <script src="js/modulesData.js" defer></script>
     <script src="js/script.js" defer></script>
     <script src="js/module.js" defer></script>
+    <style>
+      /* Fix Completed badge styling to work with dynamically generated content */
+      .lesson-meta .lesson-status.completed {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #2e7d32;
+        color: #fff !important;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 16px;
+        padding: 3px 16px 3px 8px;
+        margin-left: 14px;
+        box-shadow: 0 1px 4px rgba(46, 125, 50, 0.07);
+        border: none;
+        vertical-align: middle;
+        transition: background 0.2s;
+        min-width: 110px;
+        justify-content: flex-start;
+        letter-spacing: 0.01em;
+      }
+
+      /* Add dot to the dynamically generated completed status */
+      .lesson-meta .lesson-status.completed::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: #7cffb0;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 7px;
+        margin-left: 2px;
+        box-shadow: 0 0 2px #fff;
+        flex-shrink: 0;
+      }
+
+      /* Keep existing demo classes (can remove later) */
+      .lesson-status-completed {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #2e7d32;
+        color: #fff !important;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 16px;
+        padding: 3px 16px 3px 8px;
+        margin-left: 14px;
+        box-shadow: 0 1px 4px rgba(46, 125, 50, 0.07);
+        border: none;
+        vertical-align: middle;
+        transition: background 0.2s;
+        min-width: 110px;
+        justify-content: flex-start;
+        letter-spacing: 0.01em;
+      }
+      .lesson-status-completed .dot {
+        width: 10px;
+        height: 10px;
+        background: #7cffb0;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 7px;
+        margin-left: 2px;
+        box-shadow: 0 0 2px #fff;
+        flex-shrink: 0;
+      }
+
+      /* Fix for lesson header area */
+      .lesson-header,
+      .lesson-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      /* Fix for text color inside the completed badge */
+      .lesson-meta .lesson-status.completed {
+        color: #fff !important;
+        font-weight: 600 !important;
+      }
+
+      /* Optional: Add a subtle divider */
+      .lesson-header-divider {
+        border: none;
+        border-top: 1px solid #333;
+        margin: 8px 0 16px 0;
+      }
+
+      /* Fix the lesson navigation and buttons */
+      .lesson-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--border-color);
+        background: transparent;
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .lesson-navigation button {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        padding: 0.7rem 1.2rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+        box-shadow: none;
+      }
+
+      .lesson-navigation button.primary-btn {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+      }
+
+      .lesson-navigation button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Ensure proper alignment in the button area */
+      .lesson-navigation button:hover:not(:disabled) {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+      }
+
+      /* Remove slanted segment and make a cleaner footer join */
+      footer {
+        background: var(--bg-color-dark);
+        border-top: 1px solid var(--border-color);
+        margin-top: 3rem;
+        position: relative;
+      }
+
+      /* Ensure no pseudo-elements are creating slants */
+      footer::before,
+      .page-layout::after,
+      main::after {
+        display: none;
+      }
+
+      /* Fix spacing between main content and footer */
+      .page-layout {
+        margin-bottom: 0;
+        padding-bottom: 2rem;
+        position: relative;
+        background: var(--bg-color);
+        z-index: 1;
+      }
+
+      /* Smooth transition between content and footer */
+      .content-area {
+        padding-bottom: 2rem;
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <div class="logo-container">
-        <img src="assets/pytorch-logo.png" alt="PyTorch Logo" class="logo" />
-        <h1>Learn PyTorch, fast.</h1>
+    <header
+      id="main-header"
+      style="
+        transition: transform 0.35s cubic-bezier(0.4, 2, 0.6, 1);
+        will-change: transform;
+      "
+    >
+      <div
+        class="logo-container"
+        style="
+          background: rgba(30, 30, 30, 0.7);
+          padding: 8px 18px;
+          border-radius: 12px;
+          display: inline-flex;
+          align-items: center;
+          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(4px);
+          margin-top: 14px;
+          margin-left: 14px;
+        "
+      >
+        <img
+          src="assets/pytorch-logo.png"
+          alt="PyTorch Logo"
+          class="logo"
+          style="height: 44px; width: auto"
+        />
+        <h1
+          style="
+            margin-left: 12px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+          "
+        >
+          <span style="font-weight: 400; color: #fff">Learn</span>
+          <span style="font-weight: 700; color: #ff5722"> PyTorch</span
+          ><span style="font-weight: 400; color: #fff">, fast.</span>
+        </h1>
       </div>
       <div class="header-right">
         <nav id="main-nav">
@@ -68,6 +266,16 @@
 
         <div class="lesson-container" id="lesson-content">
           <!-- Lesson content will be dynamically loaded -->
+          <div class="lesson-header">
+            <div>
+              <h2 style="margin: 0 0 0 2px">What is PyTorch?</h2>
+              <span class="lesson-status-completed">
+                <span class="dot"></span>Completed
+              </span>
+            </div>
+            <!-- ...other header content... -->
+          </div>
+          <hr class="lesson-header-divider" />
           <div class="lesson-placeholder">
             <p>Select a lesson from the sidebar to begin learning</p>
           </div>
@@ -109,22 +317,67 @@
           <h4>Connect with Soham</h4>
           <ul>
             <li>
-              <a href="https://sohambuilds.github.io" target="_blank">Portfolio</a>
+              <a href="https://sohambuilds.github.io" target="_blank"
+                >Portfolio</a
+              >
             </li>
             <li>
-              <a href="https://github.com/sohambuilds" target="_blank">GitHub</a>
+              <a href="https://github.com/sohambuilds" target="_blank"
+                >GitHub</a
+              >
             </li>
             <li>
-              <a href="https://linkedin.com/in/sohamr" target="_blank">LinkedIn</a>
+              <a href="https://linkedin.com/in/sohamr" target="_blank"
+                >LinkedIn</a
+              >
             </li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
         <p>
-          &copy; 2023 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>
+          &copy; 2025 PyTorch Fundamentals by
+          <a href="https://sohambuilds.github.io" target="_blank" style="color: #ff5722;">Soham Roy</a>
         </p>
       </div>
     </footer>
+    <script>
+      (function () {
+        const header = document.getElementById("main-header");
+        let hideTimeout = null;
+        let isHidden = false;
+
+        function showHeader() {
+          if (!isHidden) return;
+          header.style.transform = "translateY(0)";
+          isHidden = false;
+        }
+
+        function hideHeader() {
+          if (isHidden) return;
+          header.style.transform = "translateY(-120%)";
+          isHidden = true;
+        }
+
+        // Show header only when mouse is near the top (within 60px)
+        document.addEventListener("mousemove", function (e) {
+          if (e.clientY < 60) {
+            showHeader();
+            if (hideTimeout) clearTimeout(hideTimeout);
+          } else if (!isHidden) {
+            if (hideTimeout) clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(hideHeader, 700);
+          }
+        });
+
+        // Always show header on focus (keyboard navigation)
+        window.addEventListener("focus", showHeader);
+
+        // Hide header by default after a short delay (for distraction-free reading)
+        window.addEventListener("DOMContentLoaded", function () {
+          setTimeout(hideHeader, 1200);
+        });
+      })();
+    </script>
   </body>
 </html>

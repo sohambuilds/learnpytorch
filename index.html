@@ -8,12 +8,71 @@
     <link rel="stylesheet" href="css/prism.css" />
     <script src="js/prism.js" defer></script>
     <script src="js/script.js" defer></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <style>
+      /* Remove slanted segment and make a cleaner footer join */
+      footer {
+        background: var(--bg-color-dark);
+        border-top: 1px solid var(--border-color);
+        margin-top: 3rem;
+        position: relative;
+      }
+
+      /* Ensure no pseudo-elements are creating slants */
+      footer::before,
+      main::after {
+        display: none;
+      }
+
+      /* Fix spacing between main content and footer */
+      main {
+        margin-bottom: 0;
+        padding-bottom: 2rem;
+        position: relative;
+        background: var(--bg-color);
+        z-index: 1;
+      }
+    </style>
   </head>
   <body>
     <header>
-      <div class="logo-container">
-        <img src="assets/pytorch-logo.png" alt="PyTorch Logo" class="logo" />
-        <h1>Learn PyTorch, fast.</h1>
+      <div
+        class="logo-container"
+        style="
+          background: rgba(30, 30, 30, 0.7);
+          padding: 8px 18px;
+          border-radius: 12px;
+          display: inline-flex;
+          align-items: center;
+          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(4px);
+          margin-top: 14px;
+          margin-left: 14px;
+        "
+      >
+        <img
+          src="assets/pytorch-logo.png"
+          alt="PyTorch Logo"
+          class="logo"
+          style="height: 44px; width: auto"
+        />
+        <h1
+          style="
+            margin-left: 12px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+          "
+        >
+          <span style="font-weight: 400; color: #fff">Learn</span>
+          <span style="font-weight: 700; color: #ff5722"> PyTorch</span
+          ><span style="font-weight: 400; color: #fff">, fast.</span>
+        </h1>
       </div>
       <div class="header-right">
         <nav id="main-nav">
@@ -43,14 +102,22 @@
         <div class="hero-content">
           <h2>Master PyTorch from Scratch</h2>
           <p>
-            I built this site to help beginners learn PyTorch quickly and effectively. No fluff, just straightforward tutorials that work.
+            I built this site to help beginners learn PyTorch quickly and
+            effectively. No fluff, just straightforward tutorials that work.
           </p>
           <a href="modules.html" class="btn primary-btn">Start Learning</a>
         </div>
         <div class="hero-image">
           <img
-            src="assets/pytorch-illustration.svg"
+            src="assets/pytorch-illustration.png"
             alt="PyTorch Illustration"
+            style="
+              max-width: 350px;
+              width: 100%;
+              height: auto;
+              display: block;
+              margin: 0 auto;
+            "
           />
         </div>
       </section>
@@ -88,7 +155,7 @@
         </div>
         <a href="modules.html" class="btn secondary-btn">View All Modules</a>
       </section>
-      
+
       <section class="about-me">
         <h2>About the Creator</h2>
         <div class="creator-info">
@@ -97,22 +164,118 @@
           </div>
           <div class="creator-bio">
             <h3>Hi, I'm Soham Roy</h3>
-            <p>I created PyTorch Fundamentals to help people like you master deep learning with PyTorch quickly and effectively. I believe learning should be straightforward and practical.</p>
+            <p>
+              I created PyTorch Fundamentals to help people like you master deep
+              learning with PyTorch quickly and effectively. I believe learning
+              should be straightforward and practical.
+            </p>
             <div class="social-links">
-              <a href="https://sohambuilds.github.io" target="_blank" class="social-link">
-                <span class="icon">🌐</span>
+              <a
+                href="https://sohambuilds.github.io"
+                target="_blank"
+                class="social-link"
+              >
+                <!-- Globe SVG icon -->
+                <span class="icon">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    style="vertical-align: middle"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="9"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                    <ellipse
+                      cx="10"
+                      cy="10"
+                      rx="4"
+                      ry="9"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                    <line
+                      x1="1"
+                      y1="10"
+                      x2="19"
+                      y2="10"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </span>
                 <span>Portfolio</span>
               </a>
-              <a href="https://github.com/sohambuilds" target="_blank" class="social-link">
-                <span class="icon">📂</span>
+              <a
+                href="https://github.com/sohambuilds"
+                target="_blank"
+                class="social-link"
+              >
+                <!-- GitHub SVG icon -->
+                <span class="icon">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    style="vertical-align: middle"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.221-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.254-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.396.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.337 4.695-4.566 4.944.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.579.688.481C19.138 20.203 22 16.447 22 12.021 22 6.484 17.523 2 12 2z"
+                    />
+                  </svg>
+                </span>
                 <span>GitHub</span>
               </a>
-              <a href="https://linkedin.com/in/sohamr" target="_blank" class="social-link">
-                <span class="icon">🔗</span>
+              <a
+                href="https://linkedin.com/in/sohamr"
+                target="_blank"
+                class="social-link"
+              >
+                <!-- LinkedIn SVG icon -->
+                <span class="icon">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    style="vertical-align: middle"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.025-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.039 0 3.6 2.001 3.6 4.601v5.595z"
+                    />
+                  </svg>
+                </span>
                 <span>LinkedIn</span>
               </a>
-              <a href="https://instagram.com/soham_.rx" target="_blank" class="social-link">
-                <span class="icon">📸</span>
+              <a
+                href="https://instagram.com/soham_.rx"
+                target="_blank"
+                class="social-link"
+              >
+                <!-- Instagram SVG icon -->
+                <span class="icon">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    style="vertical-align: middle"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.334 3.608 1.308.974.974 1.246 2.241 1.308 3.608.058 1.266.069 1.646.069 4.85s-.012 3.584-.07 4.85c-.062 1.366-.334 2.633-1.308 3.608-.974.974-2.241 1.246-3.608 1.308-1.266.058-1.646.069-4.85.069s-3.584-.012-4.85-.07c-1.366-.062-2.633-.334-3.608-1.308-.974-.974-1.246-2.241-1.308-3.608-.058-1.266-.069-1.646-.069-4.85s.012-3.584.07-4.85c.062-1.366.334-2.633 1.308-3.608.974-.974 2.241-1.246 3.608-1.308 1.266-.058 1.646-.069 4.85-.069zm0-2.163c-3.259 0-3.667.012-4.947.07-1.276.058-2.687.334-3.678 1.325-.991.991-1.267 2.402-1.325 3.678-.058 1.28-.07 1.688-.07 4.947s.012 3.667.07 4.947c.058 1.276.334 2.687 1.325 3.678.991.991 2.402 1.267 3.678 1.325 1.28.058 1.688.07 4.947.07s3.667-.012 4.947-.07c1.276-.058 2.687-.334 3.678-1.325.991-.991 1.267-2.402 1.325-3.678.058-1.28.07-1.688.07-4.947s-.012-3.667-.07-4.947c-.058-1.276-.334-2.687-1.325-3.678-.991-.991-2.402-1.267-3.678-1.325-1.28-.058-1.688-.07-4.947-.07zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm7.2-10.406a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"
+                    />
+                  </svg>
+                </span>
                 <span>Instagram</span>
               </a>
             </div>
@@ -128,6 +291,7 @@
             src="assets/pytorch-logo-small.png"
             alt="PyTorch Logo"
             class="logo-small"
+            style="height: 32px; width: auto"
           />
           <p>PyTorch Fundamentals</p>
         </div>
@@ -164,7 +328,8 @@
       </div>
       <div class="footer-bottom">
         <p>
-          &copy; 2023 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>
+          &copy; 2025 PyTorch Fundamentals by
+          <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>
         </p>
       </div>
     </footer>

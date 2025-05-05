@@ -1,30 +1,14 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Get module ID from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const moduleId = parseInt(urlParams.get("id"));
-
-  if (!moduleId) {
-    window.location.href = "modules.html";
-    return;
-  }
-
-  // Move all module/lesson data to a separate file for maintainability
-  // For now, import it as a global variable (modulesData) if available, else fallback to inline
-
-  const modules =
-    window.modulesData && Array.isArray(window.modulesData)
-      ? window.modulesData
-      : [
-          {
-            id: 1,
-            title: "Introduction to PyTorch",
-            description:
-              "Learn the basics of PyTorch, its architecture, and how it compares to other frameworks.",
-            lessons: [
-              {
-                id: 1,
-                title: "What is PyTorch?",
-                content: `
+window.module1Data = [
+  {
+    id: 1,
+    title: "Introduction to PyTorch",
+    description:
+      "Learn the basics of PyTorch, its architecture, and how it compares to other frameworks.",
+    lessons: [
+      {
+        id: 1,
+        title: "What is PyTorch?",
+        content: `
               <h2>What is PyTorch?</h2>
               <p>Hey there! Let's get straight to the point: PyTorch is one of the most popular deep learning frameworks out there, but what exactly makes it so special?</p>
 
@@ -101,12 +85,12 @@ else:
                 </div>
               </div>
             `,
-                completed: false,
-              },
-              {
-                id: 2,
-                title: "Tensors - The Building Blocks",
-                content: `
+        completed: false,
+      },
+      {
+        id: 2,
+        title: "Tensors - The Building Blocks",
+        content: `
               <h2>Tensors - The Building Blocks</h2>
               <p>
                 Tensors are the heart of PyTorch. If you get comfortable with them, everything else gets easier. Let's break down what they are and how to use them in practice.
@@ -226,12 +210,12 @@ print(t)  # tensor([99.,  1.,  1.])
                 </div>
               </div>
             `,
-                completed: false,
-              },
-              {
-                id: 3,
-                title: "Automatic Differentiation (Autograd)",
-                content: `
+        completed: false,
+      },
+      {
+        id: 3,
+        title: "Automatic Differentiation (Autograd)",
+        content: `
               <h2>Autograd - Automatic Differentiation</h2>
               <p>
                 <strong>Autograd</strong> is PyTorch's secret sauce for deep learning. It automatically keeps track of all the operations you do on tensors and builds a "computational graph" behind the scenes. This graph lets PyTorch figure out how to compute gradients for you, so you never have to do calculus by hand.
@@ -364,12 +348,12 @@ print(f"∂d/∂c: {c.grad}")  # Should be 2 * c = 6
                 </div>
               </div>
             `,
-                completed: false,
-              },
-              {
-                id: 4,
-                title: "Your First PyTorch Program",
-                content: `
+        completed: false,
+      },
+      {
+        id: 4,
+        title: "Your First PyTorch Program",
+        content: `
               <h2>Your First PyTorch Program: Linear Regression from Scratch</h2>
               <p>
                 Let's put together everything you've learned so far! We'll build and train a simple linear regression model using PyTorch tensors and autograd—no fancy libraries, just the basics.
@@ -488,487 +472,8 @@ print(f"Final learned parameters: w={w.item():.2f}, b={b.item():.2f}")
                 </p>
               </div>
             `,
-                completed: false,
-              },
-            ],
-          },
-         
-          // Additional modules would be defined here
-        ];
-
-  // Find current module
-  const currentModule = modules.find((module) => module.id === moduleId);
-
-  if (!currentModule) {
-    window.location.href = "modules.html";
-    return;
-  }
-
-  // Set page title
-  document.title = `${currentModule.title} | PyTorch Learning Platform`;
-
-  // Update module information
-  document.getElementById("module-title").textContent = currentModule.title;
-  document.getElementById("module-breadcrumb").textContent =
-    currentModule.title;
-
-  // Load saved progress
-  currentModule.lessons.forEach((lesson) => {
-    const savedProgress = localStorage.getItem(
-      `module-${moduleId}-lesson-${lesson.id}`
-    );
-    if (savedProgress === "completed") {
-      lesson.completed = true;
-    }
-  });
-
-  // Calculate and display module progress
-  updateModuleProgress(true); // With animation
-
-  // Render lessons in sidebar with staggered animation
-  const lessonsList = document.getElementById("lessons-list");
-
-  currentModule.lessons.forEach((lesson, index) => {
-    const listItem = document.createElement("li");
-    listItem.style.opacity = "0";
-    listItem.style.transform = "translateX(-10px)";
-    listItem.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-    listItem.style.transitionDelay = `${index * 0.08}s`;
-
-    listItem.innerHTML = `
-            <a href="#" class="lesson-link ${
-              lesson.completed ? "completed" : ""
-            }" data-lesson-id="${lesson.id}">
-                <span class="lesson-status ${
-                  lesson.completed ? "completed" : ""
-                }"></span>
-                ${lesson.title}
-            </a>
-        `;
-
-    lessonsList.appendChild(listItem);
-
-    // Trigger animation after a small delay
-    setTimeout(() => {
-      listItem.style.opacity = "1";
-      listItem.style.transform = "translateX(0)";
-    }, 100);
-  });
-
-  // Add event listeners to lesson links with ripple effect
-  document.querySelectorAll(".lesson-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      // Create ripple effect
-      const ripple = document.createElement("span");
-      ripple.classList.add("ripple");
-      link.appendChild(ripple);
-
-      const rect = link.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      const x = e.clientX - rect.left - size / 2;
-      const y = e.clientY - rect.top - size / 2;
-
-      ripple.style.width = ripple.style.height = `${size}px`;
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-
-      setTimeout(() => {
-        ripple.remove();
-      }, 600);
-
-      // Remove active class from all lessons
-      document
-        .querySelectorAll(".lesson-link")
-        .forEach((l) => l.classList.remove("active"));
-
-      // Add active class to clicked lesson
-      link.classList.add("active");
-
-      const lessonId = parseInt(link.getAttribute("data-lesson-id"));
-      loadLesson(lessonId);
-    });
-  });
-
-  // Mark as complete button
-  const markCompleteBtn = document.getElementById("mark-complete");
-  markCompleteBtn.addEventListener("click", () => {
-    const activeLesson = document.querySelector(".lesson-link.active");
-    if (activeLesson) {
-      const lessonId = parseInt(activeLesson.getAttribute("data-lesson-id"));
-      const lesson = currentModule.lessons.find((l) => l.id === lessonId);
-
-      if (lesson && !lesson.completed) {
-        // Add completion animation
-        const checkmark = document.createElement("span");
-        checkmark.innerHTML = "✓";
-        checkmark.classList.add("completion-animation");
-        markCompleteBtn.appendChild(checkmark);
-
-        setTimeout(() => {
-          checkmark.remove();
-
-          // Update status
-          lesson.completed = true;
-          activeLesson.classList.add("completed");
-          activeLesson
-            .querySelector(".lesson-status")
-            .classList.add("completed");
-
-          // Update lesson status in the UI
-          const lessonStatusElement = document.querySelector(
-            ".lesson-meta .lesson-status"
-          );
-          if (lessonStatusElement) {
-            lessonStatusElement.textContent = "Completed";
-            lessonStatusElement.classList.add("completed");
-          }
-
-          // Save progress to localStorage
-          localStorage.setItem(
-            `module-${moduleId}-lesson-${lessonId}`,
-            "completed"
-          );
-
-          // Update module progress with animation
-          updateModuleProgress(true);
-        }, 600);
-      }
-    }
-  });
-
-  // Previous and next lesson buttons
-  const prevLessonBtn = document.getElementById("prev-lesson");
-  const nextLessonBtn = document.getElementById("next-lesson");
-
-  prevLessonBtn.addEventListener("click", () => {
-    const activeLesson = document.querySelector(".lesson-link.active");
-    if (activeLesson) {
-      const lessonId = parseInt(activeLesson.getAttribute("data-lesson-id"));
-      if (lessonId > 1) {
-        const prevLessonLink = document.querySelector(
-          `.lesson-link[data-lesson-id="${lessonId - 1}"]`
-        );
-        prevLessonLink.click();
-      }
-    }
-  });
-
-  nextLessonBtn.addEventListener("click", () => {
-    const activeLesson = document.querySelector(".lesson-link.active");
-    if (activeLesson) {
-      const lessonId = parseInt(activeLesson.getAttribute("data-lesson-id"));
-      if (lessonId < currentModule.lessons.length) {
-        const nextLessonLink = document.querySelector(
-          `.lesson-link[data-lesson-id="${lessonId + 1}"]`
-        );
-        nextLessonLink.click();
-      }
-    }
-  });
-
-  // Load the first lesson by default
-  if (currentModule.lessons.length > 0) {
-    setTimeout(() => {
-      document.querySelector(".lesson-link").click();
-    }, 500); // Small delay for the initial animations to finish
-  }
-
-  // Function to update module progress
-  function updateModuleProgress(animate = false) {
-    const totalLessons = currentModule.lessons.length;
-    const completedLessons = currentModule.lessons.filter(
-      (lesson) => lesson.completed
-    ).length;
-
-    const progressPercentage = Math.round(
-      (completedLessons / totalLessons) * 100
-    );
-
-    const progressBar = document.getElementById("module-progress-bar");
-    const progressText = document.getElementById("module-progress-text");
-
-    if (animate) {
-      progressBar.style.width = "0%";
-      setTimeout(() => {
-        progressBar.style.transition = "width 1s ease-out";
-        progressBar.style.width = `${progressPercentage}%`;
-      }, 100);
-
-      let currentCount = 0;
-      const interval = setInterval(() => {
-        if (currentCount < progressPercentage) {
-          currentCount++;
-          progressText.textContent = `${currentCount}% Complete`;
-        } else {
-          clearInterval(interval);
-        }
-      }, 20);
-    } else {
-      progressBar.style.width = `${progressPercentage}%`;
-      progressText.textContent = `${progressPercentage}% Complete`;
-    }
-
-    // Save overall module progress
-    localStorage.setItem(`module-${moduleId}-progress`, progressPercentage);
-  }
-
-  // Function to load lesson content with animation
-  function loadLesson(lessonId) {
-    const lesson = currentModule.lessons.find((l) => l.id === lessonId);
-
-    if (!lesson) return;
-
-    // Update navigation buttons
-    prevLessonBtn.disabled = lessonId === 1;
-    nextLessonBtn.disabled = lessonId === currentModule.lessons.length;
-
-    // This would typically load content from a server
-    const lessonContent = document.getElementById("lesson-content");
-
-    // Add fade out effect
-    lessonContent.style.opacity = "0";
-    lessonContent.style.transform = "translateY(10px)";
-
-    setTimeout(() => {
-      // Check if this lesson has pre-defined content
-      if (lesson.content) {
-        lessonContent.innerHTML = `
-          <h1 class="lesson-title">${lesson.title}</h1>
-          <div class="lesson-meta">
-              <span>Lesson ${lessonId} of ${currentModule.lessons.length}</span>
-              <span class="lesson-status ${
-                lesson.completed ? "completed" : ""
-              }">${lesson.completed ? "Completed" : "Not Completed"}</span>
-          </div>
-          <div class="lesson-body">${lesson.content}</div>
-        `;
-      } else {
-        // Use the placeholder content for lessons that don't have content yet
-        lessonContent.innerHTML = `
-          <h1 class="lesson-title">${lesson.title}</h1>
-          <div class="lesson-meta">
-              <span>Lesson ${lessonId} of ${currentModule.lessons.length}</span>
-              <span class="lesson-status ${
-                lesson.completed ? "completed" : ""
-              }">${lesson.completed ? "Completed" : "Not Completed"}</span>
-          </div>
-          
-          <div class="lesson-body">
-              <p>This lesson content is coming soon! Check back later.</p>
-          </div>
-        `;
-      }
-
-      // Fade in the content
-      setTimeout(() => {
-        lessonContent.style.transition =
-          "opacity 0.5s ease, transform 0.5s ease";
-        lessonContent.style.opacity = "1";
-        lessonContent.style.transform = "translateY(0)";
-
-        // Initialize syntax highlighting if Prism is loaded
-        if (window.Prism) {
-          Prism.highlightAll();
-        }
-      }, 50);
-    }, 300); // Wait for fade out
-  }
-
-  // Add additional CSS for the module page
-  const style = document.createElement("style");
-  style.textContent = `
-        .page-layout {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-            min-height: calc(100vh - 160px);
-        }
-        
-        .sidebar {
-            width: 300px;
-            border-right: 1px solid var(--border-color);
-            padding: 2rem 1rem;
-            background-color: var(--card-bg);
-        }
-        
-        .content-area {
-            flex: 1;
-            padding: 2rem;
-        }
-        
-        .module-info {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .lesson-nav h3 {
-            margin-bottom: 1rem;
-        }
-        
-        .lesson-nav ul {
-            list-style: none;
-        }
-        
-        .lesson-nav li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .lesson-link {
-            display: block;
-            padding: 0.5rem;
-            border-radius: 4px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: background-color var(--transition-speed);
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .lesson-link:hover {
-            background-color: rgba(238, 76, 44, 0.1);
-        }
-        
-        .lesson-link.active {
-            background-color: rgba(238, 76, 44, 0.2);
-            font-weight: 500;
-        }
-        
-        .lesson-status {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-            background-color: var(--border-color);
-            display: inline-block;
-            transition: background-color 0.3s ease;
-        }
-        
-        .lesson-status.completed {
-            background-color: var(--success-color);
-        }
-        
-        .lesson-title {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .lesson-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .lesson-section {
-            margin: 2rem 0;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.5s ease forwards;
-            animation-delay: 0.2s;
-        }
-        
-        .lesson-section:nth-child(2) {
-            animation-delay: 0.4s;
-        }
-        
-        .lesson-section:nth-child(3) {
-            animation-delay: 0.6s;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .lesson-section h2 {
-            margin-bottom: 1rem;
-        }
-        
-        .challenge-box {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            box-shadow: 0 4px 12px var(--shadow-color);
-            transition: transform 0.3s ease;
-            border-left: 3px solid #2196f3;
-        }
-        
-        .challenge-box:hover {
-            transform: translateY(-3px);
-        }
-        
-        .lesson-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .ripple {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-        }
-        
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-        
-        .completion-animation {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background-color: var(--success-color);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: complete 0.6s ease forwards;
-        }
-        
-        @keyframes complete {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            70% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-        
-        @media (max-width: 768px) {
-            .page-layout {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-        }
-    `;
-
-  document.head.appendChild(style);
-});
+        completed: false,
+      },
+    ],
+  },
+];

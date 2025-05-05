@@ -469,9 +469,9 @@ nav ul li a.active::after {
   margin: 0 auto;
 }
 
-module-preview h2 {
+.module-preview h2 {
   font-size: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   position: relative;
   display: inline-block;
 }
@@ -479,11 +479,11 @@ module-preview h2 {
 .module-preview h2::after {
   content: "";
   position: absolute;
-  width: 50%;
+  width: 100%;
   height: 3px;
   background-color: var(--primary-color);
   bottom: -10px;
-  left: 25%;
+  left: 0;
   border-radius: 2px;
 }
 
@@ -1079,15 +1079,18 @@ footer ul li a:hover::before {
 
 /* Creator section styles */
 .about-me {
-  padding: 4rem 2rem;
+  padding: 5rem 2rem;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto;
   text-align: center;
+  background-color: rgba(238, 76, 44, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 5px 20px var(--shadow-color);
 }
 
 .about-me h2 {
   font-size: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   position: relative;
   display: inline-block;
 }
@@ -1095,11 +1098,11 @@ footer ul li a:hover::before {
 .about-me h2::after {
   content: "";
   position: absolute;
-  width: 50%;
+  width: 100%;
   height: 3px;
   background-color: var(--primary-color);
   bottom: -10px;
-  left: 25%;
+  left: 0;
   border-radius: 2px;
 }
 
@@ -1107,26 +1110,58 @@ footer ul li a:hover::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 3.5rem;
   max-width: 900px;
-  margin: 0 auto;
+  margin: 2rem auto 0;
   flex-wrap: wrap;
+  padding: 1.5rem;
+  background-color: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.creator-info:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .creator-image {
-  flex: 0 0 200px;
+  flex: 0 0 220px;
+  position: relative;
+}
+
+.creator-image::after {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--primary-color);
+  z-index: -1;
+  opacity: 0.4;
+  transform: scale(0.95);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.creator-image:hover::after {
+  transform: scale(1.05);
+  opacity: 0.6;
 }
 
 .creator-image img {
   width: 100%;
   max-width: 200px;
   border-radius: 50%;
-  box-shadow: 0 5px 15px var(--shadow-color);
+  box-shadow: 0 8px 25px var(--shadow-color);
   transition: transform 0.3s ease;
+  border: 4px solid white;
 }
 
 .creator-image img:hover {
-  transform: scale(1.05);
+  transform: rotate(5deg) scale(1.05);
 }
 
 .creator-bio {
@@ -1136,16 +1171,35 @@ footer ul li a:hover::before {
 }
 
 .creator-bio h3 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 1.2rem;
   color: var(--primary-color);
+  position: relative;
+  display: inline-block;
+}
+
+.creator-bio h3::after {
+  content: "";
+  position: absolute;
+  width: 40%;
+  height: 3px;
+  background-color: var(--primary-color);
+  bottom: -8px;
+  left: 0;
+  border-radius: 2px;
+}
+
+.creator-bio p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
 }
 
 .social-links {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1.8rem;
 }
 
 .social-link {
@@ -1155,33 +1209,41 @@ footer ul li a:hover::before {
   text-decoration: none;
   color: var(--text-color);
   background-color: var(--card-bg);
-  padding: 0.6rem 1rem;
+  padding: 0.8rem 1.2rem;
   border-radius: 50px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   transition: all 0.3s ease;
 }
 
 .social-link:hover {
   background-color: var(--primary-color);
   color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px var(--shadow-color);
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(238, 76, 44, 0.4);
 }
 
 .social-link .icon {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
 @media (max-width: 768px) {
   .creator-info {
     flex-direction: column;
     gap: 2rem;
+    padding: 2rem 1rem;
   }
-  
+
   .creator-bio {
     text-align: center;
   }
-  
+
+  .creator-bio h3::after {
+    left: 30%;
+    width: 40%;
+  }
+
   .social-links {
     justify-content: center;
   }

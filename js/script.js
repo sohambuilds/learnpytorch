@@ -97,15 +97,19 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   // Update page titles and metadata
-  document.title = document.title.replace("PyTorch Learning Platform", "Learn PyTorch, fast.");
-  
+  document.title = document.title.replace(
+    "PyTorch Learning Platform",
+    "Learn PyTorch, fast."
+  );
+
   // Replace platform name in footers
-  document.querySelectorAll('.footer-logo p').forEach(el => {
+  document.querySelectorAll(".footer-logo p").forEach((el) => {
     el.textContent = "PyTorch Fundamentals";
   });
-  
-  document.querySelectorAll('.footer-bottom p').forEach(el => {
-    el.innerHTML = '&copy; 2023 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>';
+
+  document.querySelectorAll(".footer-bottom p").forEach((el) => {
+    el.innerHTML =
+      '&copy; 2023 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>';
   });
 
   // Load progress from localStorage
