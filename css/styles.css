@@ -461,6 +461,133 @@ nav ul li a.active::after {
   display: inline-block;
 }
 
+/* Prerequisites Section - Redesigned */
+.prerequisites {
+  padding: 3.5rem 0 3rem 0;
+  background: linear-gradient(120deg, #181818 60%, #232526 100%);
+  border: none;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.prerequisites h2 {
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #fff;
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.prerequisites > .container > p {
+  text-align: center;
+  color: #e0e0e0;
+  font-size: 1.08rem;
+  margin-bottom: 2.2rem;
+  opacity: 0.85;
+}
+
+.prereq-grid {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2.2rem;
+  flex-wrap: wrap;
+  margin-top: 0;
+}
+
+.prereq-item {
+  background: linear-gradient(120deg, #232526 60%, #181818 100%);
+  border-radius: 18px;
+  padding: 2.2rem 1.6rem 1.7rem 1.6rem;
+  box-shadow: 0 6px 32px 0 rgba(0, 0, 0, 0.22);
+  border: 1.5px solid #292929;
+  min-width: 270px;
+  max-width: 340px;
+  flex: 1 1 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  transition: transform 0.22s, box-shadow 0.22s;
+}
+
+.prereq-item:hover {
+  transform: translateY(-7px) scale(1.025);
+  box-shadow: 0 16px 40px 0 rgba(255, 109, 77, 0.13);
+  border-color: var(--primary-color);
+}
+
+.prereq-icon {
+  font-size: 2.2rem;
+  margin-bottom: 1.1rem;
+  color: var(--primary-color);
+  background: rgba(255, 109, 77, 0.08);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prereq-item h3 {
+  color: var(--primary-color);
+  margin-bottom: 0.7rem;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.prereq-item p {
+  color: #e0e0e0;
+  font-size: 1.04rem;
+  margin-bottom: 0.7rem;
+  opacity: 0.93;
+  line-height: 1.6;
+}
+
+.resource-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.2rem;
+  color: var(--primary-color);
+  text-decoration: underline;
+  font-weight: 500;
+  font-size: 1.01rem;
+  transition: color 0.18s;
+  gap: 0.2em;
+}
+
+.resource-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.external-link-icon {
+  margin-left: 0.18em;
+  font-size: 1.1em;
+}
+
+@media (max-width: 900px) {
+  .prereq-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+  .prereq-item {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .prereq-item {
+  background: var(--bg-color-dark);
+}
+
 /* Module Preview Section */
 .module-preview {
   padding: 4rem 2rem;
@@ -727,6 +854,34 @@ footer ul li a:hover::before {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.9rem;
   opacity: 0.6;
+}
+
+/* Fix footer background and text color in dark mode */
+[data-theme="dark"] footer {
+  background: var(--secondary-color) !important;
+  color: #fff !important;
+}
+
+[data-theme="dark"] .footer-logo p,
+[data-theme="dark"] .footer-links h4,
+[data-theme="dark"] .footer-resources h4,
+[data-theme="dark"] .footer-bottom,
+[data-theme="dark"] .footer-links ul li a,
+[data-theme="dark"] .footer-resources ul li a {
+  color: #fff !important;
+  opacity: 0.9;
+}
+
+[data-theme="dark"] .footer-links ul li a:hover,
+[data-theme="dark"] .footer-resources ul li a:hover {
+  color: var(--primary-color) !important;
+  opacity: 1;
+}
+
+/* Remove or override any --bg-color-dark usage for footer in dark mode */
+[data-theme="dark"] footer,
+[data-theme="dark"] footer::before {
+  background: var(--secondary-color) !important;
 }
 
 /* Animations */
