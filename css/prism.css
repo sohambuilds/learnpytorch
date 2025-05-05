@@ -1,0 +1,175 @@
+/**
+ * Prism.js theme for code syntax highlighting
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: var(--code-text);
+  background: none;
+  font-family: var(--font-code);
+  font-size: 1em;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+  border-radius: 8px;
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+pre[class*="language-"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: var(--code-bg);
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em 0.3em;
+  border-radius: 0.3em;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: #abb2bf;
+}
+
+.token.selector,
+.token.tag {
+  color: #e06c75;
+}
+
+.token.property,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol {
+  color: #d19a66;
+}
+
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin {
+  color: #98c379;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #56b6c2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #c678dd;
+}
+
+.token.function {
+  color: #61afef;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #c678dd;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.code-toolbar {
+  position: relative;
+  margin: 1em 0;
+}
+
+.code-toolbar > .toolbar {
+  position: absolute;
+  top: 0.3em;
+  right: 0.2em;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.code-toolbar:hover > .toolbar {
+  opacity: 1;
+}
+
+.code-toolbar > .toolbar .toolbar-item {
+  display: inline-block;
+  margin-right: 0.2em;
+}
+
+.code-toolbar > .toolbar a {
+  cursor: pointer;
+}
+
+.code-toolbar > .toolbar button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  overflow: visible;
+  padding: 0.25em 0.5em;
+  user-select: none;
+  background-color: rgba(224, 224, 224, 0.2);
+  color: #bbb;
+  border-radius: 0.3em;
+  transition: all 0.3s ease;
+}
+
+.code-toolbar > .toolbar button:hover,
+.code-toolbar > .toolbar button:focus {
+  color: #fff;
+  background-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+/* Line highlighting */
+.line-highlight {
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--primary-color);
+}
+
+/* Line numbers */
+.line-numbers .line-numbers-rows {
+  border-right-color: #333;
+}
+
+.line-numbers-rows > span:before {
+  color: #606060;
+}
