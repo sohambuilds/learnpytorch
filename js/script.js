@@ -107,9 +107,10 @@ document.addEventListener("DOMContentLoaded", () => {
     el.textContent = "PyTorch Fundamentals";
   });
 
+  // Replace copyright year in footer
   document.querySelectorAll(".footer-bottom p").forEach((el) => {
     el.innerHTML =
-      '&copy; 2023 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank">Soham Roy</a>';
+      '&copy; 2025 PyTorch Fundamentals by <a href="https://sohambuilds.github.io" target="_blank" style="color:#ff5722;">Soham Roy</a>';
   });
 
   // Load progress from localStorage
