@@ -60,19 +60,22 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       id: 3,
-      title: "Neural Networks",
-      description:
-        "Build and train basic neural networks using PyTorch's nn module.",
-      lessonsCount: 6,
+      title: "Training",
+      description: `Learn how to efficiently load data with Datasets and DataLoaders, 
+                    implement a complete training loop, and properly evaluate model 
+                    performance on unseen data. You'll master data batching, training 
+                    loop components (forward pass, loss calculation, backpropagation), 
+                    and validation techniques.`,
+      lessonsCount: 3,
       progress: 0,
       difficulty: "Intermediate",
     },
     {
       id: 4,
-      title: "Computer Vision",
+      title: "Practical Considerations",
       description:
-        "Apply PyTorch to image classification, object detection, and other computer vision tasks.",
-      lessonsCount: 7,
+        "Learn key practical skills for PyTorch development, including saving models and GPU acceleration.",
+      lessonsCount: 3,
       progress: 0,
       difficulty: "Intermediate",
     },

@@ -4,5 +4,6 @@ window.modulesData = [
   ...(window.module1Data || []),
   ...(window.module2Data || []),
   ...(window.module3Data || []),
+  ...(window.module4Data || []),
   // ...add more as you create more modules
 ];

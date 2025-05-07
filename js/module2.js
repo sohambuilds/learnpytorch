@@ -823,6 +823,222 @@ with torch.no_grad():  # Don't track gradients for this evaluation
         `,
         completed: false,
       },
+      {
+        id: 5,
+        title: "Module 2 Practice Task",
+        content: `
+          <h2>Module 2 Cumulative Task: Mini Training Step Simulation</h2>
+          <p>
+            Now that you've learned about neural network modules, layers, loss functions, and optimizers, it's time to put it all together! In this practice task, you'll simulate a complete training step for a simple regression model.
+          </p>
+
+          <div class="lesson-section">
+            <h3>Objective</h3>
+            <p>
+              Simulate a single forward and backward pass with parameter updates for a simple regression model, applying all the core concepts from this module.
+            </p>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Part 1: Define the Model</h3>
+            <p>
+              First, let's create a custom neural network by applying what you learned in Lessons 2.1 and 2.2. We'll build a simple regression model with two linear layers and a ReLU activation.
+            </p>
+            
+            <pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Define a custom neural network for regression
+class SimpleRegressionModel(nn.Module):
+    def __init__(self):
+        super(SimpleRegressionModel, self).__init__()
+        # Linear layer: 15 input features → 10 hidden features
+        self.layer1 = nn.Linear(15, 10)
+        # ReLU activation function
+        self.activation = nn.ReLU()
+        # Linear layer: 10 hidden features → 1 output feature
+        self.layer2 = nn.Linear(10, 1)
+    
+    def forward(self, x):
+        # Pass input through first layer
+        x = self.layer1(x)
+        # Apply activation function
+        x = self.activation(x)
+        # Pass through second layer to produce final output
+        x = self.layer2(x)
+        return x</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Part 2: Instantiate Components</h3>
+            <p>
+              Now let's create instances of our model, an appropriate loss function for regression, and an optimizer:
+            </p>
+            
+            <pre><code class="language-python"># Create an instance of your model
+model = SimpleRegressionModel()
+
+# Define a loss function for regression (from Lesson 2.3)
+# MSE is appropriate for regression problems
+loss_function = nn.MSELoss()
+
+# Choose an optimizer (from Lesson 2.4)
+# Let's use Adam with a learning rate of 0.005
+optimizer = optim.Adam(model.parameters(), lr=0.005)
+
+# Print the components we've created
+print("Model architecture:")
+print(model)
+print("\nLoss function:", loss_function)
+print("Optimizer:", optimizer)</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Part 3: Prepare Data</h3>
+            <p>
+              Let's create some dummy input and target tensors to use for our training simulation:
+            </p>
+            
+            <pre><code class="language-python"># Create a batch of 8 samples with 15 features each
+input_data = torch.randn(8, 15)
+
+# Create corresponding target values (8 samples, 1 output each)
+target_data = torch.randn(8, 1)
+
+print(f"Input shape: {input_data.shape}")
+print(f"Target shape: {target_data.shape}")</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Part 4: Perform One Training Step</h3>
+            <p>
+              Now we'll execute a complete training step by following the core optimization routine you learned in Lesson 2.4:
+            </p>
+            
+            <pre><code class="language-python"># Step 1: Zero gradients
+optimizer.zero_grad()
+
+# Step 2: Forward pass - get predictions from model
+predictions = model(input_data)
+
+# Step 3: Calculate loss
+loss = loss_function(predictions, target_data)
+
+# Step 4: Backward pass - calculate gradients
+loss.backward()
+
+# Step 5: Update weights
+optimizer.step()
+
+# Print the loss value
+print(f"Loss after one training step: {loss.item():.6f}")</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Verifying Our Progress</h3>
+            <p>
+              Let's check if our model improved by calculating the loss again with the updated weights:
+            </p>
+            
+            <pre><code class="language-python"># Re-evaluate the model with the same data
+with torch.no_grad():  # No need to track gradients for this evaluation
+    new_predictions = model(input_data)
+    new_loss = loss_function(new_predictions, target_data)
+    
+print(f"Original loss: {loss.item():.6f}")
+print(f"New loss: {new_loss.item():.6f}")
+print(f"Did loss decrease? {'Yes' if new_loss < loss else 'No'}")</code></pre>
+
+            <p>
+              If your implementation is correct, you should see that the loss has decreased after the parameter update, indicating that your model has learned something from this single training step!
+            </p>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Complete Solution</h3>
+            <p>
+              Here's the complete code that combines all the steps above:
+            </p>
+            
+            <pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Define the model
+class SimpleRegressionModel(nn.Module):
+    def __init__(self):
+        super(SimpleRegressionModel, self).__init__()
+        self.layer1 = nn.Linear(15, 10)
+        self.activation = nn.ReLU()
+        self.layer2 = nn.Linear(10, 1)
+    
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.activation(x)
+        x = self.layer2(x)
+        return x
+
+# Instantiate components
+model = SimpleRegressionModel()
+loss_function = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.005)
+
+# Prepare data
+input_data = torch.randn(8, 15)
+target_data = torch.randn(8, 1)
+
+# Perform one training step
+optimizer.zero_grad()
+predictions = model(input_data)
+loss = loss_function(predictions, target_data)
+loss.backward()
+optimizer.step()
+
+# Show result
+print(f"Loss: {loss.item():.6f}")
+
+# Verify improvement
+with torch.no_grad():
+    new_predictions = model(input_data)
+    new_loss = loss_function(new_predictions, target_data)
+    print(f"New loss: {new_loss.item():.6f}")
+    print(f"Improvement: {loss.item() - new_loss.item():.6f}")</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Challenge: Extend Your Learning</h3>
+            <div class="challenge-box">
+              <p>
+                <strong>Try these extensions</strong> to deepen your understanding:
+              </p>
+              <ol>
+                <li>Add a third linear layer to the model and observe how the architecture changes</li>
+                <li>Train the model for multiple steps in a loop and plot the loss values to see the learning curve</li>
+                <li>Compare different optimizers (SGD vs. Adam) and different learning rates</li>
+                <li>Create separate training and validation data to monitor for overfitting</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Congratulations!</h3>
+            <p>
+              You've successfully completed Module 2! You now understand how to:
+            </p>
+            <ul>
+              <li>Create custom neural networks with <code>nn.Module</code></li>
+              <li>Use different layer types and activation functions</li>
+              <li>Choose appropriate loss functions for your tasks</li>
+              <li>Implement the complete training step with optimizers</li>
+            </ul>
+            <p>
+              With these fundamental building blocks, you're ready to create and train more complex neural networks for real-world applications!
+            </p>
+          </div>
+        `,
+        completed: false,
+      },
     ],
   },
 ];
