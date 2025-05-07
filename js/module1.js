@@ -423,7 +423,7 @@ print(f"dy/dw: {w.grad}")  # 2
 print(f"dy/db: {b.grad}")  # 1
 </code></pre>
                 
-                <p><strong>Mathematical Explanation:</strong></p>
+                <p><strong> Explanation:</strong></p>
                 <p>
                   We have y = wx + b where w = 3, x = 2, and b = 1
                 </p>
@@ -437,7 +437,7 @@ print(f"dy/db: {b.grad}")  # 1
               </div>
 
               <div class="lesson-section">
-                <h3>A More Complex Example: Chain Rule in Action</h3>
+                <h3> Using the Chain Rule</h3>
                 <pre><code class="language-python"># Let's try a more complex function
 x = torch.tensor(2.0, requires_grad=True)
 w = torch.tensor(3.0, requires_grad=True)
@@ -454,7 +454,7 @@ y.backward()
 print(f"dy/dx: {x.grad}")  # Should be 36
 print(f"dy/dw: {w.grad}")  # Should be 24</code></pre>
 
-                <p><strong>Mathematical Explanation (Chain Rule):</strong></p>
+                <p><strong> Explanation (Chain Rule):</strong></p>
                 <p>
                   We have z = wx and y = z<sup>2</sup>, so y = (wx)<sup>2</sup>
                 </p>
@@ -475,7 +475,7 @@ print(f"dy/dw: {w.grad}")  # Should be 24</code></pre>
               </div>
 
               <div class="lesson-section">
-                <h3>Gradients Accumulate: Understanding the Math</h3>
+                <h3>Gradients Accumulate: </h3>
                 <p>
                   When you call <code>.backward()</code> multiple times without zeroing gradients, PyTorch adds the new gradients to the old ones. This is because each <code>.backward()</code> call essentially adds terms to the total derivative.
                 </p>
@@ -503,7 +503,7 @@ print(f"w.grad: {w.grad}")  # 2 (from y1) + 4 (from y2) = 6
 print(f"b.grad: {b.grad}")  # 1 (from y1) + 0 (from y2) = 1
 </code></pre>
                 <p>
-                  <strong>Mathematical explanation:</strong>
+                  <strong> Explanation:</strong>
                 </p>
                 <p>
                   For the first function y<sub>1</sub> = wx + b:
