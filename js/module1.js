@@ -186,16 +186,121 @@ print(a @ b)      # Matrix multiplication
               </div>
 
               <div class="lesson-section">
-                <h3>PyTorch & NumPy: Best Friends</h3>
+                <h3>Dimension Manipulation: Squeeze and Unsqueeze</h3>
                 <p>
-                  You can convert between PyTorch tensors and NumPy arrays easily (as long as the tensor is on the CPU). They often share memory, so changing one can change the other!
+                  When working with neural networks, you'll often need to add or remove dimensions from your tensors:
                 </p>
-                <pre><code class="language-python">import numpy as np
-t = torch.ones(3)
-arr = t.numpy()
-arr[0] = 99
-print(t)  # tensor([99.,  1.,  1.])
+                <pre><code class="language-python"># unsqueeze() adds a dimension of size 1
+vector = torch.tensor([1, 2, 3, 4])
+print(f"Original shape: {vector.shape}")  # torch.Size([4])
+
+# Add dimension at index 0 (make it a column vector)
+col_vector = vector.unsqueeze(0)
+print(f"After unsqueeze(0): {col_vector.shape}")  # torch.Size([1, 4])
+print(col_vector)
+# tensor([[1, 2, 3, 4]])
+
+# Add dimension at index 1 (make it a row vector)
+row_vector = vector.unsqueeze(1)
+print(f"After unsqueeze(1): {row_vector.shape}")  # torch.Size([4, 1])
+print(row_vector)
+# tensor([[1],
+#         [2],
+#         [3],
+#         [4]])
+
+# squeeze() removes dimensions of size 1
+tensor_with_ones = torch.zeros(2, 1, 3, 1)
+print(f"Original shape: {tensor_with_ones.shape}")  # torch.Size([2, 1, 3, 1])
+
+# Remove all dimensions of size 1
+squeezed = tensor_with_ones.squeeze()
+print(f"After squeeze(): {squeezed.shape}")  # torch.Size([2, 3])
+
+# Remove only the dimension at index 1
+partially_squeezed = tensor_with_ones.squeeze(1)
+print(f"After squeeze(1): {partially_squeezed.shape}")  # torch.Size([2, 3, 1])
 </code></pre>
+                <p>
+                  <strong>Why this matters:</strong> Many operations in deep learning require specific tensor dimensions. For example, neural networks often expect batched inputs, and broadcasting rules rely on specific dimension arrangements.
+                </p>
+              </div>
+
+              <div class="lesson-section">
+                <h3>NumPy and PyTorch Tensor Interoperability</h3>
+                <p>
+                  Converting between NumPy arrays and PyTorch tensors is straightforward and an important skill for any practical ML workflow. Let's dive deeper into how these conversions work:
+                </p>
+                <h4>NumPy to PyTorch</h4>
+                <pre><code class="language-python">import numpy as np
+import torch
+
+# Create a NumPy array
+np_array = np.array([[1, 2, 3], [4, 5, 6]])
+print(f"NumPy array: \n{np_array}")
+print(f"Type: {type(np_array)}")
+
+# Convert to PyTorch tensor - Method 1: from_numpy()
+# IMPORTANT: This shares the memory with the original NumPy array
+torch_tensor1 = torch.from_numpy(np_array)
+print(f"\nPyTorch tensor (from_numpy): \n{torch_tensor1}")
+print(f"Type: {type(torch_tensor1)}")
+print(f"Data type: {torch_tensor1.dtype}")  # Notice it preserves the NumPy dtype
+
+# Modify the original NumPy array and see the tensor change
+np_array[0, 0] = 99
+print(f"\nModified NumPy array: \n{np_array}")
+print(f"PyTorch tensor (showing changes): \n{torch_tensor1}")
+
+# Convert to PyTorch tensor - Method 2: torch.tensor()
+# This creates a copy, not sharing memory
+torch_tensor2 = torch.tensor(np_array)
+print(f"\nPyTorch tensor (torch.tensor): \n{torch_tensor2}")
+
+# Modify the NumPy array again - tensor2 won't change
+np_array[0, 1] = 88
+print(f"\nModified NumPy array again: \n{np_array}")
+print(f"PyTorch tensor1 (shared memory): \n{torch_tensor1}")
+print(f"PyTorch tensor2 (copied): \n{torch_tensor2}")
+</code></pre>
+
+                <h4>PyTorch to NumPy</h4>
+                <pre><code class="language-python"># Create a PyTorch tensor
+torch_tensor = torch.tensor([[7, 8, 9], [10, 11, 12]], dtype=torch.float32)
+print(f"PyTorch tensor: \n{torch_tensor}")
+
+# Convert to NumPy array
+# IMPORTANT: This shares memory if the tensor is on CPU
+numpy_array = torch_tensor.numpy()
+print(f"\nNumPy array: \n{numpy_array}")
+print(f"Type: {type(numpy_array)}")
+
+# Modify the PyTorch tensor and see the NumPy array change
+torch_tensor[0, 0] = 77
+print(f"\nModified PyTorch tensor: \n{torch_tensor}")
+print(f"NumPy array (showing changes): \n{numpy_array}")
+
+# What happens with GPU tensors?
+if torch.cuda.is_available():
+    # Move tensor to GPU
+    gpu_tensor = torch_tensor.cuda()
+    print(f"\nGPU tensor: \n{gpu_tensor}")
+    
+    # To convert to NumPy, we must first move back to CPU
+    # Cannot directly call .numpy() on a CUDA tensor
+    numpy_from_gpu = gpu_tensor.cpu().numpy()
+    print(f"NumPy array from GPU tensor: \n{numpy_from_gpu}")
+</code></pre>
+                <p>
+                  <strong>Key points to remember:</strong>
+                </p>
+                <ul>
+                  <li><code>torch.from_numpy()</code> creates a tensor that shares memory with the NumPy array. Changes to one affect the other.</li>
+                  <li><code>torch.tensor()</code> creates a copy with its own memory.</li>
+                  <li><code>tensor.numpy()</code> creates a NumPy array that shares memory with the tensor if it's on CPU.</li>
+                  <li>GPU tensors must be moved to CPU before conversion to NumPy.</li>
+                  <li>Data type conversion can happen automatically in some cases.</li>
+                </ul>
               </div>
 
               <div class="lesson-section">
@@ -204,9 +309,11 @@ print(t)  # tensor([99.,  1.,  1.])
                   <li>Tensors are the core data structure in PyTorch</li>
                   <li>They're like NumPy arrays, but with GPU support and more</li>
                   <li>Get comfortable with creation, indexing, reshaping, and math</li>
+                  <li>Learn to use <code>squeeze()</code> and <code>unsqueeze()</code> for dimension manipulation</li>
+                  <li>Understand the differences between copying and sharing memory when converting between NumPy and PyTorch</li>
                 </ul>
                 <div class="challenge-box">
-                  <p><strong>Challenge:</strong> Create a 2x3 tensor of random numbers and print its mean. Then, convert it to a NumPy array and add 1 to every element. What happens to the tensor?</p>
+                  <p><strong>Challenge:</strong> Create a 2x3 tensor of random numbers and print its mean. Then, convert it to a NumPy array and add 1 to every element. Check if the original tensor has changed. Next, create another tensor using <code>torch.tensor()</code> from the NumPy array and modify the array again. Does this second tensor also change?</p>
                 </div>
               </div>
             `,
@@ -254,7 +361,49 @@ print(t)  # tensor([99.,  1.,  1.])
               </div>
 
               <div class="lesson-section">
-                <h3>Basic Autograd Example</h3>
+                <h3>Understanding the Math: Derivatives and the Chain Rule</h3>
+                <p>
+                  Before diving into PyTorch code, let's understand the mathematical foundation of autograd. The key concept is calculating derivatives using the chain rule.
+                </p>
+                
+                <h4>Derivatives: The Rate of Change</h4>
+                <p>
+                  A derivative measures how much a function's output changes when we make a small change to its input. For a function f(x), the derivative is denoted as df/dx or f'(x).
+                </p>
+                <p>For example:</p>
+                <ul>
+                  <li>If f(x) = x<sup>2</sup>, then f'(x) = 2x</li>
+                  <li>If f(x) = sin(x), then f'(x) = cos(x)</li>
+                  <li>If f(x) = ax + b, then f'(x) = a</li>
+                </ul>
+                
+                <h4>Partial Derivatives: Multiple Inputs</h4>
+                <p>
+                  When a function has multiple inputs, like f(x, y, z), we compute partial derivatives with respect to each input: ∂f/∂x, ∂f/∂y, ∂f/∂z.
+                </p>
+                <p>For example, if f(x, y) = x<sup>2</sup> + xy + y<sup>2</sup>:</p>
+                <ul>
+                  <li>∂f/∂x = 2x + y</li>
+                  <li>∂f/∂y = x + 2y</li>
+                </ul>
+                
+                <h4>The Chain Rule: Composite Functions</h4>
+                <p>
+                  The chain rule is the key to automatic differentiation. It tells us how to differentiate composite functions:
+                </p>
+                <p>
+                  If z = f(y) and y = g(x), then dz/dx = dz/dy · dy/dx
+                </p>
+                <p>In words: "The derivative of z with respect to x equals the derivative of z with respect to y times the derivative of y with respect to x."</p>
+                <p>
+                  This extends to multiple variables and longer chains, allowing PyTorch to compute derivatives for complex neural networks with millions of parameters!
+                </p>
+              </div>
+
+              <div class="lesson-section">
+                <h3>Basic Autograd Example with Math</h3>
+                <p>Let's examine a simple example with both the code and the calculus:</p>
+
                 <pre><code class="language-python">import torch
 
 # Create tensors that require gradients
@@ -273,25 +422,108 @@ print(f"dy/dx: {x.grad}")  # 3
 print(f"dy/dw: {w.grad}")  # 2
 print(f"dy/db: {b.grad}")  # 1
 </code></pre>
+                
+                <p><strong>Mathematical Explanation:</strong></p>
                 <p>
-                  <strong>Notice:</strong> The gradients match the partial derivatives you'd expect from calculus!
+                  We have y = wx + b where w = 3, x = 2, and b = 1
+                </p>
+                <p>The partial derivatives are:</p>
+                <ul>
+                  <li>∂y/∂x = w = 3</li>
+                  <li>∂y/∂w = x = 2</li>
+                  <li>∂y/∂b = 1</li>
+                </ul>
+                <p>When we call <code>y.backward()</code>, PyTorch computes these exact values and stores them in the <code>.grad</code> attribute of each tensor.</p>
+              </div>
+
+              <div class="lesson-section">
+                <h3>A More Complex Example: Chain Rule in Action</h3>
+                <pre><code class="language-python"># Let's try a more complex function
+x = torch.tensor(2.0, requires_grad=True)
+w = torch.tensor(3.0, requires_grad=True)
+
+# Intermediate calculation
+z = w * x  # z = 3 * 2 = 6
+
+# Final calculation
+y = z ** 2  # y = 6^2 = 36
+
+# Compute gradients
+y.backward()
+
+print(f"dy/dx: {x.grad}")  # Should be 36
+print(f"dy/dw: {w.grad}")  # Should be 24</code></pre>
+
+                <p><strong>Mathematical Explanation (Chain Rule):</strong></p>
+                <p>
+                  We have z = wx and y = z<sup>2</sup>, so y = (wx)<sup>2</sup>
+                </p>
+                <p>Using the chain rule:</p>
+                <ul>
+                  <li>∂y/∂z = 2z = 2 · 6 = 12</li>
+                  <li>∂z/∂x = w = 3</li>
+                  <li>∂z/∂w = x = 2</li>
+                </ul>
+                <p>So:</p>
+                <ul>
+                  <li>∂y/∂x = ∂y/∂z · ∂z/∂x = 12 · 3 = 36</li>
+                  <li>∂y/∂w = ∂y/∂z · ∂z/∂w = 12 · 2 = 24</li>
+                </ul>
+                <p>
+                  This matches the PyTorch values we get. The power of autograd is computing these derivatives automatically, even for much more complex functions.
                 </p>
               </div>
 
               <div class="lesson-section">
-                <h3>Gradients Accumulate</h3>
+                <h3>Gradients Accumulate: Understanding the Math</h3>
                 <p>
-                  If you call <code>.backward()</code> again without zeroing gradients, PyTorch adds the new gradients to the old ones.
+                  When you call <code>.backward()</code> multiple times without zeroing gradients, PyTorch adds the new gradients to the old ones. This is because each <code>.backward()</code> call essentially adds terms to the total derivative.
                 </p>
-                <pre><code class="language-python"># Another output using the same parameters
-z = w * x**2  # z = 3 * 2^2 = 12
-z.backward()
+                <pre><code class="language-python"># Reset our tensors
+x = torch.tensor(2.0, requires_grad=True)
+w = torch.tensor(3.0, requires_grad=True)
+b = torch.tensor(1.0, requires_grad=True)
+
+# First function
+y1 = w * x + b  # y1 = 3 * 2 + 1 = 7
+y1.backward()
+
+print("--- After first backward() call ---")
+print(f"x.grad: {x.grad}")  # 3  (dy1/dx)
+print(f"w.grad: {w.grad}")  # 2  (dy1/dw)
+print(f"b.grad: {b.grad}")  # 1  (dy1/db)
+
+# Second function using the same parameters
+y2 = w * x**2  # y2 = 3 * 2^2 = 12
+y2.backward()
 
 print("--- After second backward() call ---")
-print(f"x.grad: {x.grad}")  # 3 (from y) + 12 (from z) = 15
-print(f"w.grad: {w.grad}")  # 2 (from y) + 4 (from z) = 6
-print(f"b.grad: {b.grad}")  # 1 (from y) + 0 (from z) = 1
+print(f"x.grad: {x.grad}")  # 3 (from y1) + 12 (from y2) = 15
+print(f"w.grad: {w.grad}")  # 2 (from y1) + 4 (from y2) = 6
+print(f"b.grad: {b.grad}")  # 1 (from y1) + 0 (from y2) = 1
 </code></pre>
+                <p>
+                  <strong>Mathematical explanation:</strong>
+                </p>
+                <p>
+                  For the first function y<sub>1</sub> = wx + b:
+                </p>
+                <ul>
+                  <li>∂y<sub>1</sub>/∂x = w = 3</li>
+                  <li>∂y<sub>1</sub>/∂w = x = 2</li>
+                  <li>∂y<sub>1</sub>/∂b = 1</li>
+                </ul>
+                <p>
+                  For the second function y<sub>2</sub> = wx<sup>2</sup>:
+                </p>
+                <ul>
+                  <li>∂y<sub>2</sub>/∂x = 2wx = 2 · 3 · 2 = 12</li>
+                  <li>∂y<sub>2</sub>/∂w = x<sup>2</sup> = 2<sup>2</sup> = 4</li>
+                  <li>∂y<sub>2</sub>/∂b = 0 (b doesn't appear in y2)</li>
+                </ul>
+                <p>
+                  The accumulated gradients are the sums: 3 + 12 = 15, 2 + 4 = 6, and 1 + 0 = 1.
+                </p>
                 <p>
                   <strong>Tip:</strong> Always zero gradients before the next backward pass!
                 </p>
@@ -328,9 +560,9 @@ print(f"y_detached requires grad: {y_detached.requires_grad}")  # False
                   <p>
                     <strong>Task:</strong> Create three tensors <code>a</code>, <code>b</code>, and <code>c</code> with scalar values (e.g., a=2.0, b=4.0, c=3.0), all requiring gradients.<br>
                     Define <code>d = a * b + c ** 2</code>.<br>
-                    Before calling <code>.backward()</code>, predict what the gradients <code>∂d/∂a</code>, <code>∂d/∂b</code>, and <code>∂d/∂c</code> should be.<br>
+                    Before calling <code>.backward()</code>, calculate the partial derivatives ∂d/∂a, ∂d/∂b, and ∂d/∂c by hand.<br>
                     Call <code>.backward()</code> on <code>d</code>.<br>
-                    Print the <code>.grad</code> attributes of <code>a</code>, <code>b</code>, and <code>c</code>. Do they match your prediction?
+                    Print the <code>.grad</code> attributes of <code>a</code>, <code>b</code>, and <code>c</code>. Do they match your calculations?
                   </p>
                   <pre><code class="language-python">import torch
 
@@ -339,11 +571,17 @@ b = torch.tensor(4.0, requires_grad=True)
 c = torch.tensor(3.0, requires_grad=True)
 
 d = a * b + c ** 2
+
+# Manually calculated derivatives:
+# ∂d/∂a = b = 4
+# ∂d/∂b = a = 2
+# ∂d/∂c = 2c = 6
+
 d.backward()
 
 print(f"∂d/∂a: {a.grad}")  # Should be b = 4
 print(f"∂d/∂b: {b.grad}")  # Should be a = 2
-print(f"∂d/∂c: {c.grad}")  # Should be 2 * c = 6
+print(f"∂d/∂c: {c.grad}")  # Should be 2c = 6
 </code></pre>
                 </div>
               </div>

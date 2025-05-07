@@ -352,7 +352,7 @@ print("Training Finished!")</code></pre>
             <ul>
               <li><strong>Consistency is Key:</strong> All tensors and the model involved in a single operation must reside on the same device.</li>
               <li><strong>Memory Management:</strong> GPUs have limited memory. If you encounter "CUDA out of memory" errors, try reducing batch size or model size.</li>
-              <li><strong>Multi-GPU Training:</strong> PyTorch supports distributed training across multiple GPUs using <code>nn.DataParallel</code> or <code>nn.DistributedDataParallel</code> (beyond the scope of this lesson).</li>
+              <li><strong>Multi-GPU Training:</strong> PyTorch supports distributed training across multiple GPUs using <code>nn.DataParallel</code> or <code>nn.DistributedDataParallel</code> (covered in the next lesson).</li>
               <li><strong>Clear Unused Variables:</strong> To free up GPU memory, you can delete tensors using <code>del tensor_name</code> or move them to CPU with <code>tensor.cpu()</code>.</li>
             </ul>
           </div>
@@ -387,33 +387,86 @@ print("Training Finished!")</code></pre>
       },
       {
         id: 3,
-        title: "Best Practices for a Full Training, Evaluation & Saving Loop",
+        title: "Introduction to Multi-GPU Training with DataParallel",
         content: `
-          <h2>Best Practices for a Full Training, Evaluation & Saving Loop</h2>
+          <h2>Introduction to Multi-GPU Training with DataParallel</h2>
           <p>
-            In this lesson, we'll consolidate our previous learnings into a robust training pipeline that includes training, periodic evaluation, and intelligently saving the best model checkpoints.
+            As deep learning models grow larger and datasets become more extensive, training on a single GPU can be time-consuming. In this lesson, we'll learn how to leverage multiple GPUs to speed up training through data parallelism.
           </p>
 
           <div class="lesson-section">
-            <h3>Key Best Practices</h3>
+            <h3>Why Multi-GPU?</h3>
             <p>
-              A professional deep learning training pipeline typically incorporates the following practices:
+              Deep learning models are becoming larger and datasets more extensive. Training on a single GPU can be time-consuming. Using multiple GPUs can significantly speed up the training process by distributing the workload, allowing you to:
             </p>
             <ul>
-              <li><strong>Modular Functions:</strong> Use separate functions for training, evaluation, and other tasks.</li>
-              <li><strong>Device Handling:</strong> Consistently use a device variable for model and data.</li>
-              <li><strong>Checkpointing Strategy:</strong> Save models based on performance metrics like validation accuracy.</li>
-              <li><strong>Resuming Training:</strong> Design your script to be able to load a checkpoint and resume training.</li>
-              <li><strong>Clear Logging:</strong> Print informative messages about training progress and results.</li>
-              <li><strong>Hyperparameter Organization:</strong> Keep hyperparameters clearly defined at the beginning.</li>
-              <li><strong>Consistent Mode Switching:</strong> Use <code>model.train()</code> before training and <code>model.eval()</code> before evaluation.</li>
+              <li>Train larger models</li>
+              <li>Use larger batch sizes</li>
+              <li>Complete training in less time</li>
+              <li>Experiment more quickly</li>
             </ul>
           </div>
 
           <div class="lesson-section">
-            <h3>A Robust Training Loop</h3>
+            <h3>Understanding Data Parallelism</h3>
             <p>
-              Let's see how to implement a comprehensive training pipeline with these best practices:
+              Data parallelism is the most common form of parallelism for training deep learning models. The core idea is:
+            </p>
+            <ol>
+              <li>Replicate the model on each available GPU</li>
+              <li>Split a mini-batch of data into smaller sub-batches (shards)</li>
+              <li>Send each sub-batch to a different GPU</li>
+              <li>Each GPU performs the forward pass with its model replica and its shard of data</li>
+              <li>Gradients are computed on each GPU</li>
+              <li>Gradients from all GPUs are typically summed up on a primary GPU (often GPU 0)</li>
+              <li>The model parameters on the primary GPU are updated</li>
+              <li>The updated parameters are then broadcast back to all other GPU replicas</li>
+            </ol>
+            <p>
+              This approach allows you to process more data in parallel without changing your model architecture.
+            </p>
+          </div>
+
+          <div class="lesson-section">
+            <h3>PyTorch's DataParallel</h3>
+            <p>
+              PyTorch provides <code>torch.nn.DataParallel</code>, a module that makes implementing data parallelism straightforward:
+            </p>
+            <ul>
+              <li>You wrap your existing model with DataParallel: <code>model = nn.DataParallel(model)</code></li>
+              <li>DataParallel handles the model replication, data scattering, gradient gathering, and parameter broadcasting automatically</li>
+              <li>Your batch size should ideally be a multiple of the number of GPUs for optimal load balancing</li>
+            </ul>
+            <p>
+              <strong>How it Works (Simplified):</strong>
+            </p>
+            <p>
+              When you call <code>model(input_batch)</code> on a DataParallel-wrapped model:
+            </p>
+            <ul>
+              <li>The <code>input_batch</code> is split along the batch dimension (dimension 0)</li>
+              <li>Each chunk is sent to a different GPU</li>
+              <li>The model is replicated on each GPU</li>
+              <li>Forward pass happens in parallel</li>
+              <li>Outputs are gathered back to the primary GPU (GPU 0 by default)</li>
+              <li>During <code>loss.backward()</code>, gradients are computed on each GPU and then summed on the primary GPU</li>
+            </ul>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Considerations and Limitations</h3>
+            <ul>
+              <li><strong>Single Machine:</strong> DataParallel is designed for multiple GPUs on a single machine. For multi-machine training, <code>torch.nn.parallel.DistributedDataParallel</code> (DDP) is preferred.</li>
+              <li><strong>GIL and Master GPU Bottleneck:</strong> Python's Global Interpreter Lock (GIL) can sometimes be a bottleneck. Also, the primary GPU (GPU 0) does more work (gathering outputs, summing gradients, parameter updates), which can lead to uneven GPU utilization.</li>
+              <li><strong>Model Saving:</strong> When using DataParallel, the model is wrapped inside <code>model.module</code>. So, when saving the state_dict, you should save <code>model.module.state_dict()</code> to get the original model's parameters, not the DataParallel wrapper's state.</li>
+              <li><strong>Graceful Fallback:</strong> It's crucial to write code that checks for the number of available GPUs and only uses DataParallel if more than one is present. Otherwise, it should run on a single GPU or CPU.</li>
+            </ul>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Code Example: MNIST Training with DataParallel</h3>
+            <p>
+              The following code demonstrates how to modify a typical training script to use DataParallel. It will use all available CUDA GPUs if more than one is found; otherwise, it will run on a single GPU or CPU.
             </p>
             <pre><code class="language-python">import torch
 import torch.nn as nn
@@ -421,56 +474,9 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-import os
+import os # For saving model
 
-# --- 1. Hyperparameters & Setup ---
-LEARNING_RATE = 0.001
-BATCH_SIZE = 64
-NUM_EPOCHS = 20
-INPUT_SIZE = 28 * 28  # MNIST images are 28x28 pixels
-HIDDEN_SIZE = 128
-NUM_CLASSES = 10      # Digits 0-9
-CHECKPOINT_FILENAME = "mnist_best_model_checkpoint.pth"
-
-# Device setup
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Using device: {device}")
-
-# --- 2. Data Loading ---
-transform_pipeline = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.1307,), (0.3081,))
-])
-
-# Training dataset
-train_dataset = torchvision.datasets.MNIST(
-    root='./data',
-    train=True,
-    download=True,
-    transform=transform_pipeline
-)
-
-train_loader = DataLoader(
-    dataset=train_dataset,
-    batch_size=BATCH_SIZE,
-    shuffle=True
-)
-
-# Test dataset
-test_dataset = torchvision.datasets.MNIST(
-    root='./data',
-    train=False,
-    download=True,
-    transform=transform_pipeline
-)
-
-test_loader = DataLoader(
-    dataset=test_dataset,
-    batch_size=1000,
-    shuffle=False
-)
-
-# --- 3. Model Definition ---
+# --- 0. Define Model (reusing SimpleNN) ---
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
         super(SimpleNN, self).__init__()
@@ -479,141 +485,193 @@ class SimpleNN(nn.Module):
         self.fc2 = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x):
-        x = x.view(x.size(0), -1)
+        x = x.view(x.size(0), -1) # Flatten the image
         out = self.fc1(x)
         out = self.relu(out)
         out = self.fc2(out)
         return out
 
-# Instantiate the model and move to device
-model = SimpleNN(INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES).to(device)
-print("Model Structure:")
-print(model)
+# --- 1. Hyperparameters & Device Setup ---
+LEARNING_RATE = 0.001
+# For DataParallel, effective batch size is BATCH_SIZE.
+# It will be split across GPUs.
+# Ensure BATCH_SIZE is >= number of GPUs.
+BATCH_SIZE = 128 # Increased batch size for multi-GPU
+NUM_EPOCHS = 3
+MODEL_SAVE_PATH = "mnist_dp_model.pth"
+
+# Determine device and number of GPUs
+if torch.cuda.is_available():
+    num_gpus = torch.cuda.device_count()
+    print(f"CUDA is available. Number of GPUs: {num_gpus}")
+    if num_gpus > 0:
+        device = torch.device("cuda") # Default to cuda:0 if multiple, DataParallel handles distribution
+    else: # Should not happen if torch.cuda.is_available() is true and count is 0, but good practice
+        print("CUDA available but no GPUs found, using CPU.")
+        device = torch.device("cpu")
+        num_gpus = 0 # Ensure num_gpus is 0
+else:
+    print("CUDA not available. Using CPU.")
+    device = torch.device("cpu")
+    num_gpus = 0
+
+# --- 2. Data Loading ---
+transform_pipeline = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])
+train_dataset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform_pipeline)
+# DataLoader batch_size is the total batch size that will be split
+train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4 if num_gpus > 0 else 0)
+
+test_dataset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform_pipeline)
+test_loader = DataLoader(dataset=test_dataset, batch_size=1000, shuffle=False, num_workers=4 if num_gpus > 0 else 0)
+
+
+# --- 3. Model Instantiation ---
+INPUT_SIZE = 28 * 28
+HIDDEN_SIZE = 128
+NUM_CLASSES = 10
+
+# Instantiate the model
+model = SimpleNN(INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES)
+
+# --- Apply DataParallel if multiple GPUs are available ---
+if num_gpus > 1:
+    print(f"Using {num_gpus} GPUs via nn.DataParallel.")
+    model = nn.DataParallel(model) # Wrap the model
+
+# Move model to the primary device (CPU or GPU0)
+# DataParallel will handle distributing to other GPUs from GPU0
+model.to(device)
+print(f"Model moved to: {device}")
+
 
 # --- 4. Loss Function and Optimizer ---
 criterion = nn.CrossEntropyLoss()
+# Optimizer receives parameters from the model (or model.module if DataParallel was used)
 optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-# --- 5. Training state initialization ---
-START_EPOCH = 0
-BEST_VAL_ACCURACY = 0.0
+# --- 5. Training Loop ---
+print(f"\\nStarting Training for {NUM_EPOCHS} epochs...")
 
-# Optional: Load checkpoint if exists to resume training
-if os.path.exists(CHECKPOINT_FILENAME):
-    print(f"Loading checkpoint: {CHECKPOINT_FILENAME}")
-    # map_location ensures model loads correctly even if current device is different from saving device
-    checkpoint = torch.load(CHECKPOINT_FILENAME, map_location=device)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    START_EPOCH = checkpoint['epoch'] # Checkpoint saves the epoch *after* which it was saved
-    BEST_VAL_ACCURACY = checkpoint.get('best_val_accuracy', 0.0) # Use .get for backward compatibility
-    print(f"Resuming training from epoch {START_EPOCH + 1}. Best validation accuracy so far: {BEST_VAL_ACCURACY:.2f}%")
-
-# --- 6. Training and Evaluation Loop ---
-print(f"Starting training from epoch {START_EPOCH + 1} up to {NUM_EPOCHS} on {device}")
-
-for epoch in range(START_EPOCH, NUM_EPOCHS):
-    # --- Training Phase ---
-    model.train()
-    train_loss_epoch = 0.0
+for epoch in range(NUM_EPOCHS):
+    model.train() # Set model to training mode
+    running_loss = 0.0
     for batch_idx, (images, labels) in enumerate(train_loader):
-        images, labels = images.to(device), labels.to(device)
+        # Move data to the primary device. DataParallel will scatter it.
+        images = images.to(device)
+        labels = labels.to(device)
+
         optimizer.zero_grad()
-        outputs = model(images)
+        outputs = model(images) # Forward pass
         loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-        train_loss_epoch += loss.item()
-    avg_train_loss = train_loss_epoch / len(train_loader)
-    print(f"Epoch [{epoch+1}/{NUM_EPOCHS}] Training Loss: {avg_train_loss:.4f}")
+        loss.backward() # Backward pass
+        optimizer.step() # Update weights
 
-    # --- Validation Phase ---
-    model.eval()
-    val_correct = 0
-    val_total = 0
-    val_loss_epoch = 0.0
-    with torch.no_grad():
-        for images, labels in test_loader: # Using test_loader as validation set here
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            loss = criterion(outputs, labels) # Can also track validation loss
-            val_loss_epoch += loss.item()
-            _, predicted = torch.max(outputs.data, 1)
-            val_total += labels.size(0)
-            val_correct += (predicted == labels).sum().item()
+        running_loss += loss.item()
+        if (batch_idx + 1) % 200 == 0: # Print every 200 mini-batches
+            print(f"Epoch [{epoch+1}/{NUM_EPOCHS}], Step [{batch_idx+1}/{len(train_loader)}], Loss: {loss.item():.4f}")
 
-    current_val_accuracy = 100 * val_correct / val_total
-    avg_val_loss = val_loss_epoch / len(test_loader)
-    print(f"Epoch [{epoch+1}/{NUM_EPOCHS}] Validation Loss: {avg_val_loss:.4f}, Validation Accuracy: {current_val_accuracy:.2f}%")
+    avg_epoch_loss = running_loss / len(train_loader)
+    print(f"--- Epoch {epoch+1} finished. Average Training Loss: {avg_epoch_loss:.4f} ---")
 
-    # Save checkpoint if current model has better validation accuracy
-    if current_val_accuracy > BEST_VAL_ACCURACY:
-        BEST_VAL_ACCURACY = current_val_accuracy
-        print(f"New best validation accuracy: {BEST_VAL_ACCURACY:.2f}%. Saving model checkpoint...")
-        checkpoint_data = {
-            'epoch': epoch + 1, # Save as the completed epoch number
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'best_val_accuracy': BEST_VAL_ACCURACY,
-            'train_loss': avg_train_loss,
-            'val_loss': avg_val_loss
-        }
-        torch.save(checkpoint_data, CHECKPOINT_FILENAME)
-        print(f"Checkpoint saved to {CHECKPOINT_FILENAME}")
-    
-    print("-" * 50) # Separator for epochs
+    # --- Evaluation Phase (after each epoch) ---
+    model.eval() # Set model to evaluation mode
+    correct_predictions = 0
+    total_samples = 0
+    with torch.no_grad(): # Disable gradient calculations
+        for images_test, labels_test in test_loader:
+            images_test = images_test.to(device)
+            labels_test = labels_test.to(device)
 
-print(f"Training finished. Best validation accuracy achieved: {BEST_VAL_ACCURACY:.2f}%")</code></pre>
+            outputs_test = model(images_test)
+            _, predicted = torch.max(outputs_test.data, 1)
+
+            total_samples += labels_test.size(0)
+            correct_predictions += (predicted == labels_test).sum().item()
+
+    accuracy = 100 * correct_predictions / total_samples
+    print(f"Validation Accuracy after Epoch {epoch+1}: {accuracy:.2f}%")
+    print("-" * 50)
+
+print("Training Finished!")
+
+# --- 6. Saving the model ---
+# If DataParallel was used, save model.module.state_dict()
+# Otherwise, save model.state_dict()
+print("Saving model...")
+if isinstance(model, nn.DataParallel):
+    torch.save(model.module.state_dict(), MODEL_SAVE_PATH)
+    print(f"Model (from model.module.state_dict()) saved to {MODEL_SAVE_PATH}")
+else:
+    torch.save(model.state_dict(), MODEL_SAVE_PATH)
+    print(f"Model (from model.state_dict()) saved to {MODEL_SAVE_PATH}")
+
+# To load:
+# loaded_model = SimpleNN(INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES)
+# loaded_model.load_state_dict(torch.load(MODEL_SAVE_PATH))
+# loaded_model.to(device) # Move to device
+# loaded_model.eval()
+# ... then use for inference</code></pre>
           </div>
 
           <div class="lesson-section">
-            <h3>Understanding the Enhanced Training Loop</h3>
-            <p>
-              Let's examine the key components of this improved training pipeline:
-            </p>
+            <h3>Key Points to Note in the Code</h3>
             <ol>
-              <li><strong>Checkpoint Loading:</strong> At the beginning, we check if a checkpoint file exists and load it if found, which allows resuming training from where we left off.</li>
-              <li><strong>Training Phase:</strong> We set the model to training mode, process batches, and track the average loss per epoch.</li>
-              <li><strong>Validation Phase:</strong> After each training epoch, we evaluate the model on the test set (serving as our validation set here).</li>
-              <li><strong>Checkpoint Saving:</strong> We save a checkpoint only when the model achieves a new best validation accuracy, ensuring we keep the best performing model.</li>
-              <li><strong>Comprehensive Checkpoint Data:</strong> Our checkpoints include all necessary information to resume training: model state, optimizer state, epoch number, and metrics.</li>
+              <li>We determine the number of available GPUs using <code>torch.cuda.device_count()</code></li>
+              <li>We only wrap the model with <code>nn.DataParallel</code> if multiple GPUs are available</li>
+              <li>The batch size should be larger than the number of GPUs for optimal utilization</li>
+              <li>When saving the model, we check if it's wrapped with DataParallel and save <code>model.module.state_dict()</code> if it is</li>
+              <li>The code gracefully falls back to single-GPU or CPU operation if multiple GPUs aren't available</li>
             </ol>
-            <p>
-              This type of loop provides a robust foundation that you can further enhance with techniques like learning rate scheduling, early stopping, and more detailed logging or visualization.
-            </p>
           </div>
 
           <div class="lesson-section">
             <h3>Try It Yourself</h3>
             <div class="challenge-box">
               <p>
-                <strong>Task 4.3:</strong> Implement a robust training and checkpointing system.
+                <strong>Task 4.3:</strong> Explore multi-GPU training with DataParallel.
               </p>
+              
+              <h4>Part 1: Understand the Code</h4>
+              <p>Carefully read through the provided code example. Pay attention to:</p>
+              <ul>
+                <li>How <code>torch.cuda.device_count()</code> is used</li>
+                <li>How <code>nn.DataParallel(model)</code> wraps the original model</li>
+                <li>How data (images, labels) is moved to the device in the training and evaluation loops</li>
+                <li>How the model state is saved correctly using <code>model.module.state_dict()</code> if DataParallel was used</li>
+              </ul>
+              
+              <h4>Part 2: Run the Script</h4>
+              <p>Execute the script and observe its behavior based on your hardware:</p>
+              <ul>
+                <li><strong>If you have multiple CUDA GPUs:</strong> Observe if the script utilizes them (you might need to use tools like <code>nvidia-smi</code> in your terminal to monitor GPU usage). You should see a message like "Using X GPUs via nn.DataParallel."</li>
+                <li><strong>If you have one CUDA GPU:</strong> The script should run on that single GPU without using DataParallel. You'll see "CUDA is available. Number of GPUs: 1".</li>
+                <li><strong>If you only have a CPU:</strong> The script should run on the CPU. You'll see "CUDA not available. Using CPU."</li>
+              </ul>
+              
+              <h4>Part 3: Conceptual Questions</h4>
+              <p>Think about these questions (especially if you don't have a multi-GPU setup):</p>
               <ol>
-                <li>Refactor your MNIST training script (which should now incorporate GPU support from Task 4.2).</li>
-                <li>Implement the checkpointing system:
-                  <ul>
-                    <li>Initialize a variable <code>best_val_accuracy</code> to <code>0.0</code> before the training loop.</li>
-                    <li>After each epoch's validation phase, if the <code>current_val_accuracy</code> is greater than <code>best_val_accuracy</code>:
-                      <ul>
-                        <li>Update <code>best_val_accuracy</code>.</li>
-                        <li>Print a message indicating a new best accuracy and that the model is being saved.</li>
-                        <li>Save a checkpoint dictionary containing at least: the current epoch number, <code>model.state_dict()</code>, <code>optimizer.state_dict()</code>, and the <code>best_val_accuracy</code>.</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-                <li><strong>Bonus Challenge:</strong> Implement the logic to load this checkpoint at the beginning of your script if the checkpoint file exists. This should allow you to resume training from the saved epoch, using the saved model and optimizer states, and the last known best validation accuracy. Test this by running training for a few epochs, stopping it, and then running it again – it should resume.</li>
+                <li>What would happen if your BATCH_SIZE was very small (e.g., smaller than the number of GPUs)? How might this affect efficiency?</li>
+                <li>Why is <code>model.module.state_dict()</code> important for saving when using DataParallel?</li>
+                <li>How would you modify this code to use a specific subset of available GPUs instead of all of them?</li>
               </ol>
-
+              
               <p>
-                This task ties together all the skills you've learned across the modules, creating a professional-quality training pipeline that handles device management, evaluation, and checkpointing.
+                <strong>Note:</strong> Even if you don't have multiple GPUs, the primary goal of this task is to understand the code structure and concepts. The script is designed to run correctly on a single GPU or CPU, with the multi-GPU specific parts (nn.DataParallel wrapping) being skipped if num_gpus ≤ 1.
+              </p>
+              
+              <p>
+                For more advanced and often more efficient multi-GPU or distributed training, <code>torch.nn.parallel.DistributedDataParallel</code> is the recommended tool, but it has a slightly steeper learning curve. DataParallel is a good starting point for single-node, multi-GPU scenarios.
               </p>
             </div>
           </div>
         `,
         completed: false,
       },
+  
     ],
   },
 ];

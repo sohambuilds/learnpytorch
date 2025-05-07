@@ -167,7 +167,7 @@ print(my_model)
 
 # Count parameters
 total_params = sum(p.numel() for p in my_model.parameters())
-print(f"Total parameters: {total_params}")  # Should be 20*10 + 10 + 10*2 + 2 = 232
+print(f"Total parameters: {total_params}")  # will be 20*10 + 10 + 10*2 + 2 = 232
 </code></pre>
             </div>
           </div>
@@ -203,7 +203,7 @@ linear_layer = nn.Linear(in_features=10, out_features=5)
 input_tensor = torch.randn(3, 10)
 output_tensor = linear_layer(input_tensor)
 print(f"Input shape: {input_tensor.shape}")
-print(f"Output shape: {output_tensor.shape}")  # Should be [3, 5]
+print(f"Output shape: {output_tensor.shape}")  # will be [3, 5]
 </code></pre>
 
             <h4>Convolutional Layers</h4>
@@ -218,7 +218,7 @@ conv_layer = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1)
 image_batch = torch.randn(2, 3, 28, 28)
 feature_maps = conv_layer(image_batch)
 print(f"Image batch shape: {image_batch.shape}")
-print(f"Feature maps shape: {feature_maps.shape}")  # Should be [2, 16, 28, 28]
+print(f"Feature maps shape: {feature_maps.shape}")  # will be [2, 16, 28, 28]
 </code></pre>
             <p>
               We'll explore convolutional networks in depth in later modules. For now, just understand they're specialized for grid-like data like images.
@@ -280,7 +280,7 @@ x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
 relu = nn.ReLU()
 y = relu(x)
 print(f"Input: {x}")
-print(f"After ReLU: {y}")  # Should be [0, 0, 0, 1, 2]
+print(f"After ReLU: {y}")  # will be [0, 0, 0, 1, 2]
 
 # Sigmoid example
 sigmoid = nn.Sigmoid()
@@ -293,7 +293,7 @@ softmax = nn.Softmax(dim=1)  # Apply along dimension 1 (across columns)
 probabilities = softmax(scores)
 print(f"Raw scores:\\n{scores}")
 print(f"Probabilities after Softmax:\\n{probabilities}")
-print(f"Sum of each row (should be 1): {probabilities.sum(dim=1)}")
+print(f"Sum of each row (will be 1): {probabilities.sum(dim=1)}")
 </code></pre>
           </div>
 
@@ -343,7 +343,7 @@ dummy_input = torch.randn(5, 784)
 # Pass through the model
 output = model(dummy_input)
 print(f"Input shape: {dummy_input.shape}")
-print(f"Output shape: {output.shape}")  # Should be [5, 10]
+print(f"Output shape: {output.shape}")  # will be [5, 10]
 </code></pre>
             
             <p>
@@ -393,7 +393,7 @@ with torch.no_grad():  # We don't need gradients for a simple forward pass
     predictions = mnist_model(dummy_images)
 
 print(f"Input shape: {dummy_images.shape}")
-print(f"Output shape: {predictions.shape}")  # Should be [3, 10]
+print(f"Output shape: {predictions.shape}")  # will be [3, 10]
 </code></pre>
             </div>
           </div>
@@ -444,7 +444,7 @@ targets = torch.tensor([[1.0], [4.0], [2.0]], dtype=torch.float32)
 loss = loss_fn(predictions, targets)
 print(f"Predictions: {predictions.squeeze()}")
 print(f"Targets: {targets.squeeze()}")
-print(f"MSE Loss: {loss.item()}")  # Should be close to 0.043
+print(f"MSE Loss: {loss.item()}")  # will be close to 0.043
 </code></pre>
 
             <h4>For Classification (Predicting Categories)</h4>
@@ -577,7 +577,7 @@ print(f"Loss: {loss.item()}")
             </p>
             <ul>
               <li>Which direction to step (using gradients)</li>
-              <li>How big each step should be (learning rate)</li>
+              <li>How big each step will be (learning rate)</li>
               <li>Whether to adjust the step size over time</li>
               <li>Whether to consider previous steps when deciding the next one</li>
             </ul>

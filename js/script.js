@@ -81,18 +81,18 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       id: 5,
-      title: "Natural Language Processing",
+      title: "Computer Vision with PyTorch",
       description:
-        "Process and analyze text data using PyTorch for tasks like sentiment analysis.",
-      lessonsCount: 6,
+        "Build a CNN in PyTorch for CIFAR-10 dataset. Learn how to use transfer learning to build a more complex model.",
+      lessonsCount: 3,
       progress: 0,
-      difficulty: "Advanced",
+      difficulty: "Intermediate",
     },
     {
       id: 6,
-      title: "Deployment & Optimization",
+      title: "NLP with PyTorch",
       description:
-        "Learn how to deploy PyTorch models to production and optimize their performance.",
+        "Leaarn the basics of Natural Language Processing. Build an RNN and LSTM for IMDB dataset and compare the performance.  ",
       lessonsCount: 5,
       progress: 0,
       difficulty: "Advanced",
