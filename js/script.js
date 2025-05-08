@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Leaarn the basics of Natural Language Processing. Build an RNN and LSTM for IMDB dataset and compare the performance.  ",
       lessonsCount: 5,
       progress: 0,
-      difficulty: "Advanced",
+      difficulty: "Intermediate",
     },
   ];
 

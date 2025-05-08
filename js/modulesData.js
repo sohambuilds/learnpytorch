@@ -6,5 +6,6 @@ window.modulesData = [
   ...(window.module3Data || []),
   ...(window.module4Data || []),
   ...(window.module5Data || []),
+  ...(window.module6Data || []),
   // ...add more as you create more modules
 ];
